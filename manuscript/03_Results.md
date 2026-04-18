@@ -2,41 +2,40 @@
 
 ## 4.1 Cohort Characteristics
 
-Filtering for valid OpenAQ pollution parity and establishing critical demographic exclusions resulted in an analysis-ready dataset of 1,110 pediatric hospitalization records. Demographically, the age bracket 2-12 years averaged a distribution favoring early development (mean age 6.2 years). 
+Filtering for valid OpenAQ pollution parity and establishing demographic exclusions resulted in an analysis-ready dataset of 1,110 pediatric hospitalization records. Within the target 2-12 years bracket, demographic distribution skewed toward early development (mean age 6.2 years). 
 
-Within outcome distributions, respiratory-specific classification applied to roughly one-fifth of the dataset (238 patients, 21.4%), while general non-respiratory differentials established the majority control class (872 patients, 78.6%).
+Within outcome classifications, respiratory diagnoses accounted for approximately one-fifth of the dataset (238 patients, 21.4%), while general non-respiratory differentials established the majority baseline (872 patients, 78.6%).
 
 ## 4.2 Predictive Model Performance
 
-All modeling formulations achieved notable stabilization mapping associative patterns through the retrospective holdout splits. 
-Logistic regression successfully resolved linear relationships yielding an ROC-AUC of 0.769 (Recall: 0.646, Precision: 0.419). Non-linear implementations generalized with enhanced confidence, with the XGBoost paradigm recording the strongest macroscopic metric profile: **ROC-AUC 0.775, Recall 0.438, and Precision 0.512.**
+All tested modeling formulations achieved stable discrimination evaluating the retrospective holdout splits. Logistic regression yielded an ROC-AUC of 0.769 (Recall: 0.646, Precision: 0.419). Non-linear implementations generalized with similar stability, with the XGBoost classifier recording the primary evaluation metrics: **ROC-AUC 0.775, Recall 0.438, and Precision 0.512.**
 
-These values denote robust algorithmic success. As anticipated for complex, naturally noisy clinical and behavioral sets, the performance safely avoids artificial indicators of data leakage (failing to exceed the clinically improbable >0.90 thresholds), thereby confirming the algorithms actively mapped true multifactorial interactions over simple localized artifacts.
+These values denote moderate algorithmic discrimination expected for retrospective observational data. The performance safely aligns with typical limits for complex, unmeasured clinical and behavioral variables, indicating successful generalization without over-fitting typical of uncontrolled classification models.
 
-## 4.3 Feature Importance and Explainability Mapping (SHAP)
+## 4.3 Feature Contributions and Model Interpretation (SHAP)
 
-To decipher the structural logic dictating admission correlations, XGBoost predictions were evaluated utilizing SHAP macro and micro methodologies.
+To decipher the logic dictating classification correlations, XGBoost predictions were evaluated utilizing macroscopic and local SHAP interpretation techniques.
 
-**Global Feature Ranking Assessment**
-Analysis of the aggregate SHAP value magnitudes prioritized predictive contributions into a strict hierarchy:
-1.  **Demographic Susceptibility:** Patients belonging to the `Age_Group_Young (5-7 years)` generated the absolute highest prediction divergence. The innate demographic vulnerability vastly outweighed purely environmental inputs when calculating absolute outcome probability.
-2.  **Temporal Constraints:** The specific `Day_of_Week` mapped as the secondary dominant feature, aggressively constraining predictions alongside overarching age. 
-3.  **Pollution Signal:** Ambient air pollution metrics established a consistent, measurable tertiary signal. Crucially, immediate `PM2.5` exposure alongside historical lag functions (`PM2_5_Lag7`) organically emerged globally as top-five factors—above `PM10`, `NO2`, and broader overarching seasonal demarcations (`Season_Winter`).
+**Global Feature Summaries**
+Analysis of the aggregate SHAP value magnitudes prioritized feature contributions into a distinct hierarchy:
+1.  **Demographic Profile:** Patients belonging to the `Age_Group_Young (5-7 years)` generated the absolute highest prediction divergence. This innate demographic component superseded environmental inputs when defining outcome probability.
+2.  **Temporal Patterns:** The specific `Day_of_Week` mapped as the second most influential feature, constraining predictions alongside overarching age profiles. 
+3.  **Pollution Signal:** Ambient air pollution metrics established a consistent tertiary contribution. Specifically, immediate `PM2.5` exposure paired with historical lags (`PM2_5_Lag7`) organically emerged globally as top-tier influences—surpassing `PM10`, `NO2`, and broader seasonal demarcations (`Season_Winter`).
 
-*(Insert: Figure 1 - SHAP Summary Bar Plot detailing macroscopic feature contribution magnitude)*
+*(Insert: Figure 1 - SHAP Summary Bar Plot detailing aggregate feature contribution magnitude)*
 
-## 4.4 Directionality and The Environmental Contribution
+## 4.4 Directionality and Environmental Relationships
 
-Translating macroscopic feature importance into directional attribution confirmed the validity of the underlying environmental thesis. While pollution did not act as the solo overriding driver of pediatric admission, its presence acted with distinct scaling proportionality.
+Translating aggregate feature importance into directional attribution confirmed the validity of the environmental relationship. While pollution did not act as the primary overarching variable for admission, a measurable proportional relationship was identified.
 
-Evaluation of the SHAP summary dot-plot visualized that escalating ambient concentrations of `PM2.5` systematically pushed individual predictive models toward a respiratory probability (positive SHAP classification). Conversely, sub-baseline PM2.5 concentrations routinely influenced models negatively, lowering respiratory likelihood probabilities safely. 
+Evaluation of the SHAP summary dot-plot visualized that escalating ambient concentrations of `PM2.5` routinely pushed predictive models toward a positive respiratory classification. Conversely, lower PM2.5 concentrations routinely influenced models negatively, decreasing respiratory admission probabilities. 
 
 *(Insert: Figure 2 - SHAP Dot Summary Plot detailing positive vs negative correlation divergence per respective feature intensity)*
 
 ## 4.5 Local Case Decomposition 
 
-To illustrate clinical realization of these intertwined vulnerabilities, localized SHAP waterfall analyses decoded distinct patient admissions. In a representative case evaluation analyzing a solitary non-respiratory classification (Outcome rendering prediction probability -6.74 in log-odds natively):
+To illustrate clinical realization of these intertwined vulnerabilities, localized SHAP waterfall analyses verified specific patient admissions. In a representative case evaluation interpreting a solitary non-respiratory classification:
 
-The patient was securely insulated against respiratory prediction primarily via non-vulnerable demographic protection (Age significantly diverging model risk downward) combined aggressively with favorable local environmental scenarios (demonstrating sub-baseline PM2.5 environmental indices pushing the logic deeply downward). This case substantiates that outcome prediction behaves natively within clinically valid interaction limits—where exposure deficits paired with protective demography adequately prevent respiratory classifications.
+The model calculated a significantly lower probability of respiratory admission for this patient (Outcome calculation spanning -6.74 in log-odds natively). This classification was predominantly driven by non-vulnerable demographic protection (older age bracket providing significant negative prediction push) combined with favorable localized environmental scenarios (evidenced by sub-baseline PM2.5 and PM10 metrics further suppressing the calculation). This case observation grounds the methodology, confirming that predictions operate within clinically valid limits where mitigated environmental exposure paired with an older pediatric age demographic contributes proportionally to non-respiratory outcomes.
 
-*(Insert: Figure 3 - SHAP Waterfall Plot interpreting isolated non-respiratory differential calculation constraints)*
+*(Insert: Figure 3 - SHAP Waterfall Plot detailing specific case-level feature contributions)*

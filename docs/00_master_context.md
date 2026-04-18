@@ -2,11 +2,11 @@
 
 ## Research Title (Final)
 
-**Explainable Machine Learning for Predicting Respiratory-Related Pediatric Hospital Admissions Using Ambient Air Pollution Data: A Retrospective Study from an Urban Indian Hospital**
+**Evaluating the Association Between Ambient Air Pollution and Pediatric Respiratory Admissions Using Explainable Machine Learning: A Retrospective Study**
 
 ## Objective
 
-Develop an explainable ML framework to analyze/predict respiratory-related pediatric hospital admissions using ambient pollution exposure features.
+Develop an explainable ML framework to evaluate the relationship and structural contributions of ambient pollution exposure features to pediatric respiratory hospital admissions.
 
 ## Locked Scope
 

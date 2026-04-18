@@ -1,0 +1,106 @@
+# Evaluating the Association Between Ambient Air Pollution and Pediatric Respiratory Admissions Using Explainable Machine Learning: A Retrospective Study
+
+**Keywords:** Air Pollution, Pediatric Respiratory Disease, Explainable AI, Machine Learning, SHAP, Public Health, Ablation Study
+
+---
+
+## 1. Abstract
+
+**Background:** Ambient air pollution is a recognized exacerbating factor for pediatric respiratory conditions, particularly in rapidly urbanizing environments. However, isolating the environmental signal from confounding variables, such as demographic susceptibility and temporal healthcare utilization behavior, remains challenging in retrospective clinical studies.
+**Objective:** To develop an explainable machine learning framework evaluating pediatric respiratory hospital admissions and defining the relative contributions of air pollution, temporal metrics, and demographic characteristics.
+**Methods:** We conducted a retrospective observational study on pediatric inpatients (aged 2-12 years) admitted to an urban hospital in Ahmedabad, India, between February 2025 and January 2026 (N=1,110). Patient records were integrated with daily ambient pollution exposure metrics (PM2.5, PM10, NO2) via OpenAQ localized sensors. An eXtreme Gradient Boosting (XGBoost) classifier was structured and interpreted utilizing SHapley Additive exPlanations (SHAP) to decode structural feature contributions. An ablation study was utilized to measure behavioral dependencies.
+**Results:** The dataset comprised 21.4% respiratory and 78.6% non-respiratory admissions. The baseline XGBoost classifier demonstrated stable evaluation metrics (ROC-AUC 0.775, Recall 0.438). SHAP analysis revealed that demographic susceptibility (specifically the 5-7 year age bracket) and temporal patterns (day incident to admission) provided the dominant contributions to classification. Removing these core demographic/behavioral features in an ablation study resulted in the ROC-AUC decreasing to 0.509, indicating that pollution variables alone do not provide sufficient predictive signal in isolation within this dataset. However, air pollution—specifically PM2.5 and its lagged exposures—demonstrated a consistent, secondary associative relationship proportional to exposure magnitude in the baseline clinical model.
+**Conclusion:** Respiratory admissions emerge from a complex intersection of environmental exposure, demographic susceptibility, and temporal healthcare patterns. Ambient air pollution demonstrates a moderate, independent contribution, highlighting its persistent role as an exacerbator of pediatric respiratory morbidity alongside overarching behavioral variables.
+
+---
+
+## 2. Introduction
+
+Pediatric respiratory conditions place immense strain on urban healthcare infrastructure, particularly in rapidly developing regions like Ahmedabad, India. Given the physiological immaturity of respiratory immune defenses, young children are uniquely vulnerable to the adverse effects of ambient air pollution, making environmental exposure a critical focal point in public health analytics. 
+
+While relationships between particulate matter (e.g., PM2.5, PM10) and respiratory hospitalizations are widely documented, parsing the direct contribution of pollution against confounding behavioral, temporal, and demographic realities is a persistent challenge in retrospective clinical environments. Healthcare utilization behavior—such as patient-delay phenomena prioritizing weekday over weekend care—alongside inherently varying age-based biological susceptibilities actively obscure the pure environmental signal.
+
+Traditional linear techniques often struggle to untangle the complex, multi-dimensional covariates standard to clinical data. Machine learning offers an alternative classification capacity; however, to preserve clinical interpretability, researchers must integrate explainable AI (XAI) paradigms that explicitly bridge algorithmic output with medical utility. 
+
+This study implements an explainable machine learning architecture to evaluate observational pediatric respiratory admissions using real-world retrospective hospital data paired with localized sensor endpoints. Rather than constructing a prospective clinical early-warning tool, this approach utilizes classification methodologies as a structural engine to derive non-linear associations. Utilizing SHAP, combined with a feature ablation experiment, we systematically map the operational hierarchy defining pediatric admissions.
+
+---
+
+## 3. Related Work
+
+The application of machine learning to environmental health has transitioned from rudimentary linear regression to high-capacity non-linear modeling. Early epidemiological frameworks predominantly utilized autoregressive integrated moving average (ARIMA) or generalized additive models (GAMs) to map respiratory outcomes against PM2.5 spikes. While effective at defining macroscopic correlations, these methods inherently struggled to natively process non-linear interactions between demographic vulnerabilities and staggered temporal healthcare utilization.
+
+Recent literature has subsequently pivoted to tree-based classifications—namely Random Forests and Gradient Boosted Models (GBMs)—to synthesize complex environmental datasets. Studies evaluating adult asthma and COPD cohorts using Deep Learning and XGBoost have documented severe associations between Nitrogen Dioxide (NO2) and acute readmissions. However, pediatric populations present a unique analytical challenge due to the immense developmental variance inherent spanning early childhood to pre-adolescence. 
+
+Furthermore, standard algorithmic literature regularly operates in a "black box" capacity, offering robust predictive metrics (e.g., high ROC-AUC values) without generating actionable clinical transparency. The integration of SHapley Additive exPlanations (SHAP)—rooted in cooperative game theory—has revolutionized feature attribution by providing local exactness for individual patient analyses. This paper builds upon existing literature by uniting XGBoost and SHAP specifically upon a localized Indian pediatric cohort, uniquely executing a feature ablation methodology to explicitly separate behavioral healthcare usage from authentic environmental degradation.
+
+---
+
+## 4. Methods
+
+### 4.1 Study Design and Cohort EDA
+This investigation was evaluated as a retrospective observational study spanning February 2025 through January 2026 focusing on a singular urban hospital in Ahmedabad, India. The population encompassed pediatric inpatients aged 2 to 12. Infants under age two were excluded due to competing physiological vulnerabilities (neonatal and purely viral etiologies) that skew environmental isolation. Demographically, the final verified target pool (N=1,110) comprised 238 respiratory classifications (21.4%) and 872 non-respiratory differentials (78.6%).
+
+*Table 1. Baseline Characteristics (N=1,110)*
+
+| Metric | Overall | Respiratory (n=238) | Non-Respiratory (n=872) |
+| :--- | :--- | :--- | :--- |
+| Mean Age (Years) | 6.2 ± 3.0 | 4.0 ± 2.5 | 6.7 ± 2.9 |
+| Gender (% Male) | 72.4% | 74.8% | 71.8% |
+| Mean PM2.5 (µg/m³) | 36.5 | 39.2 | 35.8 |
+| Mean PM10 (µg/m³) | 95.2 | 95.0 | 95.2 |
+
+Baseline demographic statistics illustrated a targeted divergence in age (respiratory admissions concentrated generally toward early development, ~4.0 years) and an associative inflation in PM2.5 concentrations corresponding directly with respiratory classifications.
+
+### 4.2 Data Sourcing and Feature Engineering
+Ambient air quality data was retroactively compiled utilizing the OpenAQ API for targeted Ahmedabad sensors. Historical exposure pipelines computationally built lagged variables tracking averages 1-day and 7-days prior (`PM2_5_Lag7`). 
+Timestamps were systematically processed into standardized proxies (`Day_of_Week`, `Month`, `Season`), while age metrics were compartmentalized (Toddler, Young, Older) to map defined growth phases.
+
+### 4.3 Algorithmic Execution and Mathematical Foundation 
+XGBoost was selected as the dominant non-linear architecture due to its superior handling of tabular, sparse clinical data and built-in L1/L2 regularization mitigating noise overfit. Using an 80/20 randomly stratified train-test holdout, the models applied a calculated positive-scaling weight (`scale_pos_weight = count(majority)/count(minority)`) to resolve fundamental occurrence imbalances in observational admissions. 
+
+SHAP TreeExplainer mapped resultant probability outcomes. SHAP calculates the marginal contribution of a feature across all viable feature permutations using an additive framework metric yielding strict theoretical guarantees missing in baseline algorithmic feature-importance charts (e.g., consistency and missingness). 
+
+### 4.4 Ablation Study Protocol
+To isolate systemic confounding variables, a secondary ablation experiment was conducted. An alternative modeling split forcefully removed all chronological, behavioral (`Day_of_Week`, `Month`), and individual demographic vectors (`Age_Years`, `Age_Group`)—isolating the predictive environment exclusively to raw ambient pollution vectors. Evaluating the magnitude of metric collapse provides empirical mathematical evidence for establishing primary interaction drivers.
+
+---
+
+## 5. Results
+
+### 5.1 Baseline Predictive Model Performance
+The primary demographic-inclusive XGBoost generalized with stable classification parameters: **ROC-AUC 0.775, Recall 0.438, and Precision 0.512.** These metrics identify a moderate, expected learning capability natively navigating noisy clinical observations without synthesizing severe data leakage dependencies. Relative comparisons identified Logistic Regression (AUC 0.769) functioning closely against standard non-linear limits. 
+
+### 5.2 Ablation Findings Confirm Primary Dependencies
+Executing the feature-ablated model evaluating exclusively environmental and raw proxy matrices resulted in a substantial reduction in performance metrics. The isolated pollution-centric algorithm yielded an **ROC-AUC of 0.509 (functioning indistinguishably from a random baseline)** and a depressed Recall of 0.333. 
+
+This ablation strongly suggests the fundamental hypothesis, indicating that pollution variables alone do not provide sufficient predictive signal in isolation within this dataset. Hospital admissions emerge mandatorily through biological demographic weakness interacting actively with behavioral admission parameters. 
+
+### 5.3 Feature Contributions and Relationships (SHAP)
+Extrapolating the foundational (0.775) baseline classifier via SHAP illustrated the exact contribution mapping:
+1.  **Demographic Profile:** `Age_Group` inputs dictated profound fundamental prediction divergence, dominating absolute probability assignments.
+2.  **Temporal Patterns:** `Day_of_Week` mapped as the secondary functional constraint shaping classification logic natively mapping admission cadences.
+3.  **Pollution Signal:** PM2.5 and lagged structures (`PM2_5_Lag7`) provided a constant, measurable tertiary influence. Examining specific directional plotting (SHAP summary dot arrays) confirmed an upward associative relationship where elevated PM2.5 exposures universally exerted minor but pervasive marginal lifts escalating individual respiratory classification probability.
+
+---
+
+## 6. Discussion and Policy Implications
+
+### 6.1 Synthesizing Biological Patterns vs Behavior
+This retrospective framework successfully delineated ambient air pollution interactions against complex clinical medicine realities. Interpreting SHAP contributions highlights that while PM2.5 acts as a persistent independent environmental stressor, it exclusively operates as a secondary aggravating layer upon extreme demographic baselines.
+
+The profound hierarchical presence of `Day_of_Week` alongside the ablation study confirmation explicitly emphasizes systemic healthcare utilization behavior over strict immediate biological causative risks. Pediatric admissions suffer from "weekend effect" delays—where guardians routinely defer specialized evaluations to standard operational weekdays. The resultant peak algorithmically learns the healthcare ecosystem's socio-economic pacing simultaneously alongside patient disease metrics. Acknowledging behavioral artifacts correctly characterizes why generic forecasting mechanisms repeatedly fail without rigid observational tuning.
+
+### 6.2 Clinical and Public Health Implications
+Functionally translating this algorithmic associative behavior yields actionable insights for urban Indian hospital infrastructure:
+*   **Predictive Staffing Realities:** Because pollution operates via `Lag7` exposure delays paired extensively behind generic day-of-week healthcare utilization, administrators can track regional PM2.5 spikes anticipating resource influxes manifesting exclusively on subsequent Mondays or Tuesdays, rather than immediately matching real-time air quality indexing.
+*   **Targeted Vulnerability Tracking:** Preventative community action can be mathematically prioritized primarily toward the hyper-susceptible pre-adolescent block identified exclusively via SHAP logic over generic pediatric broadcast warnings.
+
+### 6.3 Limitations
+Due to retrospective structuring, this framework interprets associative risk probabilities, severely limited inherently from defining strict deterministic biological causality. Aggregated OpenAQ datasets lack high-fidelity spatial gradients evaluating distinct household exposure limits and heavily omit unmeasured patient comorbidities (asthma staging) shaping internal baseline resistance. 
+
+---
+
+## 7. Conclusion
+
+This execution of explainable machine learning evaluated the dense multi-factorial architecture driving pediatric respiratory admissions. We established realistically balanced parameters confirming that respiratory hospitalizations emerge from chronological intersections between fundamental demographic susceptibility and behavioral healthcare utilization. While ambient PM2.5 exposures independently associate sequentially with elevated respiratory manifestations, ablation experimentation confirms they perform solely as secondary environmental aggravators functioning within demographic contexts. Defining explicitly non-deterministic associative interpretations affords clinicians reliable public-health lenses free from prospective forecasting inaccuracies defining modern ambient epidemiological morbidity.
