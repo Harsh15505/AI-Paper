@@ -1,0 +1,5 @@
+# 6. Conclusion
+
+This retrospective study implemented explainable machine learning to decompose the complex architecture of pediatric respiratory hospital admissions. Our findings reinforce a balanced and realistic scientific understanding: respiratory hospitalizations emerge from robust chronological interactions between demographic susceptibilities and external environment factors. Ambient air pollution, particularly PM2.5 and its lagged exposure variants, demonstrated consistent but realistically moderate contributions mapping model predictions—safely operating alongside significantly stronger demographic drivers spanning varying age blocks and behavioral healthcare utilization proxies mirrored inherently by temporal patterns. 
+
+By avoiding pure deterministic forecasting and prioritizing associative explainability, this workflow provides clinicians and public health policymakers a more transparent, mathematically honest lens evaluating environment-induced clinical morbidity in developing urban sectors.

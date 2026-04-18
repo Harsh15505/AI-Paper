@@ -1,0 +1,5 @@
+import pandas as pd
+
+aqi = pd.read_csv("Ahmedabad_AQI_Daily.csv")
+print(aqi.head())
+print(aqi.describe())
